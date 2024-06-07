@@ -1,6 +1,6 @@
 :scrollbar:
 :toc2:
-:preinstall_operators: %preinstall_operators%
+:preinstall_operators: {preinstall_operators}
 
 =  Backup and Restore
 
@@ -18,7 +18,7 @@ Additionally, many storage partners offer the ability to protect virtual machine
 This lab will use OADP to perform a virtual machine backup and restore.
 
 .Goals
-* Review Operator 
+* Review Operator
 * Perform a backup
 * Perform a restore
 
@@ -92,7 +92,7 @@ image::Backup/05_Backup_Completed.png[]
 
 . Navigate to *Virtualization* -> *VirtualMachines* and delete the VM `fedora02`.
 
-. Go back to *Operators* -> *Installed Operators* and select *OADP Operator*. 
+. Go back to *Operators* -> *Installed Operators* and select *OADP Operator*.
 
 . Switch to the *Restore* tab and press *Create Restore*
 +
@@ -109,7 +109,7 @@ metadata:
   namespace: openshift-adp
 spec:
   backupName: backup-fedora02
-  includedResources: [] 
+  includedResources: []
   excludedResources:
   - nodes
   - events
@@ -128,6 +128,6 @@ image::Backup/07_Restore_Completed.png[]
 image::Backup/08_VM_Restored.png[]
 
 
-== Summary 
+== Summary
 
 Protecting virtual machines is a critical aspect of a virtualization platform. OpenShift Virtualization provides multiple methods that enable native protection, for example using OADP, or allowing storage and backup partners to integrate their offerings. If you have questions about how to protect virtual machines, please don't hesitate to ask the proctors for the workshop or reach out to your vendor to determine their compatibility with OpenShift Virtualization.

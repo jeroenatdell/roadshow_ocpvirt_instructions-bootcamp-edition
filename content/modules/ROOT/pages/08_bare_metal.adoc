@@ -1,5 +1,5 @@
 :scrollbar:
-:toc2: 
+:toc2:
 
 :numbered:
 
@@ -16,7 +16,7 @@ In this section, you will explore the Red Hat OpenShift environment provided for
 
 * Today OpenShift Virtualization is fully supported with self-managed _bare metal servers_ on-premises or at a similar location, such as a co-lo. The lab you're using today is an OpenShift cluster deployed to Equinix.
 
-* Amazon Web Services (AWS) bare metal instances, as well as ROSA (Red Hat OpenShift Services on AWS), are fully supported. See link:https://www.redhat.com/en/blog/managing-virtual-machines-and-containers-as-code-with-openshift-virtualization-on-red-hat-openshift-service-on-aws[OpenShift Virtualization on ROSA]. 
+* Amazon Web Services (AWS) bare metal instances, as well as ROSA (Red Hat OpenShift Services on AWS), are fully supported. See link:https://www.redhat.com/en/blog/managing-virtual-machines-and-containers-as-code-with-openshift-virtualization-on-red-hat-openshift-service-on-aws[OpenShift Virtualization on ROSA].
 
 * IBM Cloud Bare Metal Servers are tech preview. See link:https://access.redhat.com/articles/6738731[Deploy OpenShift Virtualization on IBM Cloud Bare Metal Nodes for details].
 
@@ -46,7 +46,7 @@ Before you install OpenShift Virtualization for Red Hat OpenShift Container Plat
 Review https://docs.openshift.com/container-platform/4.12/virt/install/preparing-cluster-for-virt.html[the documentation] for specific requirements and guidance on hardware for OpenShift Virtualization.
 
 [NOTE]
-If your cluster uses worker nodes with different CPUs, e.g. Intel and AMD, live migration failures can occur because different CPUs have different capabilities. 
+If your cluster uses worker nodes with different CPUs, e.g. Intel and AMD, live migration failures can occur because different CPUs have different capabilities.
 
 == Review Red Hat OpenShift Cluster
 
@@ -61,7 +61,7 @@ When deployed using the installer provisioned infrastructure (IPI) method, OpenS
 Almost every interaction with Red Hat OpenShift can be done in the OpenShift Console. The console is a full-featured web application that allows administrators and users alike to use the platform in a guided manner. Wizards are provided for most tasks which makes it easy to administer the system.
 
 // WKTBD: Replace with actual password from variable
-. Navigate to %ocp_url% and login with user `admin` and the password `%ocp_password%`.
+. Navigate to {ocp_url} and login with user `admin` and the password `{ocp_password}`.
 
 . From the navigation menu, select *Compute* -> *Nodes*:
 +
@@ -86,7 +86,7 @@ image::Install/Worker0_Details.png[]
 
 === Review Bare Metal hosts
 
-When using `Baseboard Management Console (BMC)` it is possible to manage the nodes using the *Red Hat OpenShift* console. 
+When using `Baseboard Management Console (BMC)` it is possible to manage the nodes using the *Red Hat OpenShift* console.
 
 . Select *Compute* -> *Bare Metal Hosts*:
 +
