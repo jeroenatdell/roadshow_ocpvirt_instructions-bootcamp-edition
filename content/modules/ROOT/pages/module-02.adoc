@@ -1,138 +1,150 @@
-= Managing an Application from GitHub
+= Storage Management
 
-In the first half of this workshop, we packaged an application into this portable container format manually using rpms.
-In the second half, we will consider that you may want to manage software from GitHub or some kind of software versioning application.
-Rather than installing rpms, we have individual software files and pull them out of that version control into a group of systems.
+Red Hat OpenShift supports multiple types of storage, both for on-premises and cloud providers. OpenShift Virtualization can use any supported container storage interface (CSI) provisioner in the environment you're running on. For example, OpenShift Data Foundation, NetApp, Dell/EMC, Fujitsu, Hitachi, Pure Storage, Portworx, and many others support on-premises, CSI provisioned, ReadWriteMany (RWX) volumes with OpenShift Virtualization.
 
-== Install RHEL 8 UBI
+This workshop segment will explore Persistent Volume Claims (PVCs), which are used to request storage from the provider and store a VM disk. Many storage providers also support snapshots and clones of their devices, be sure to check with your vendor to verify the features supported by the CSI driver and storage device.
 
-In this lab, we will be using a different Red Hat Enterprise Linux version in my container. 
+Notably, there are no restrictions on storage protocol (e.g. NFS, iSCSI, FC, etc.) specific to OpenShift Virtualization. The only requirement is that the RWX access mode is available to support live migration of VMs within the cluster. Otherwise, the storage that best meets the needs of your VMs and applications is always the right choice.
 
-. Verify the host system release 
+image::module-02/00_disk_concepts.png[link=self, window=blank, width=100%]
 
+[[examine_pvc]]
+
+== Examine the PVC for a VM
+
+In this lab, we are going to take a closer look at the storage behind the virtual machine we just created *fedora01*. 
+
+. Start by clicking on the left menu for *Storage* -> *Persistent Volume Claims*. Make sure you are in the *vmexamples* namespace, you should see the *fedora01* VM from the previous section listed.
 +
-[source,bash]
-----
-cat /etc/redhat-release
-----
-+ 
-NOTE: The `bastion` system is Red Hat Enterprise Linux 9, and when you built the previous container, you used the UBI9 image. This means both the image and the container were built off the same Red Hat Enterprise Linux packages. 
-
-. As we did previously in this lab, Use `buildah from` to pull down the Red Hat Enterprise Linux 8 UBI.
-
+//add image
 +
-[source,bash]
-----
-buildah from registry.access.redhat.com/ubi8/ubi
-----
-
-NOTE: Because you already pulled one image named `ubi-working-container` this one is called `ubi-working-container-1`. 
-
-[#prerequisites]
-== Install Prerequisites
-
-Now that you have a working container, you will use the same process as before installing all the prerequisites, changing config files, and manipulating the contents of this container to be in the desired state.
-
-The software you will install is a JavaScript-based game that runs on a web browser. As before in the lab, use dnf to install software inside the container. 
-
-. Use `buildah run` and install Apache (`httpd`) into the `ubi-working-container-1` container. 
+. Click on the *fedora01* VM and you will be presented with a screen that shows additional details about the storage volume backing the VM. 
 +
-[source,bash]
-----
-buildah run ubi-working-container-1 -- dnf -y install httpd
-----
-
-== Enable Service
-
-The next thing to do is to use a systemctl to enable the service. The ubi-init provides full systemd service to the container.
-This will start up any of the services that are enabled. 
-
-. Enable the `httpd` service using `buildah run`
-
+. Notice the following information about the persistent volume claim:
+.. The PVC is currently bound successfuly
+.. The PVC has a requested capacity and size of 30GiB
+.. The Access mode of the PVC is ReadWriteMany (RWX)
+.. The Volume mode of the PVC is Block
+.. The volume is using the *ocs-storagecluster-ceph-rbd-virtualization* storage class. 
 +
-[source,bash]
-----
-buildah run ubi-working-container-1 -- systemctl enable httpd
-----
+image::module-02/02_Fedora01_PVC_Details.png[link=self, window=blank, width=100%]
 
-NOTE: The UBI standard image doesn't have systemd installed on it by default. The `ubi-init` container image does include systemd. Plan accordingly to which image you use to build applications.  
+[[managing_snapshots]]
+== Managing Snapshots
 
-== Explore Source Materials
+OpenShift Virtualization relies on the CSI storage provider's snapshot capability to create disk snapshots for the virtual machine, which can be taken "online" while the VM is running or "offline" while the VM is powered off. If the KVM integrations are installed on the VM, you will also have the option of quiescing the guest operating system (quiescing ensures that the snapshot of the disk represents a consistent state of the guest file systems, e.g., buffers are flushed and the journal is consistent).
 
-A GitHub repository has already been synchronized to `/home/devops/clumsy-bird/` This repository contains the configurations for your application.
+Since disk snapshots are dependent on the storage implementation, abstracted by the CSI, performance impact and capacity used will depend on the storage provider. Work with your storage vendor to determine how the system will manage PVC snapshots and the impact they may or may not have.
 
-. Verify the repository is cloned inside the `/home/devops/` directory
+[IMPORTANT]
+====
+Snapshots, by themselves, are not a backup or disaster recovery capability. The data needs to be protected in other ways, such as one or more copies stored in a different location, to recover from the storage system failing.
+
+In addition to the OpenShift API for Data Protection (OADP), partners such as Kasten by Veeam, Trilio, and Storware support the ability to backup and restore virtual machines to the same cluster or other clusters as needed.
+====
+
+With the VM snapshots feature, cluster administrators and application developers can:
+
+* Create a new snapshot
+* List all snapshots attached to a specific VM
+* Revert a VM to a snapshot
+* Delete an existing VM snapshot
+
+=== Creating and Using Snapshots
+
+. Navigate back to *Virtualization* -> *VirtualMachines* and select the virtual machine, *fedora01* in the project *vmexamples*.
 +
-[source,bash]
-----
-cd /home/devops/
-----
-
+image::module-02/03_VM_Overview.png[link=self, window=blank, width=100%]
 +
-[source,bash]
-----
-git clone https://github.com/ellisonleao/clumsy-bird
-----
+. Notice there are currently no snapshots of this VM listed on the overview page. 
 +
-NOTE: The output states that the software has already been checked out. 
+image::module-02/04_Snapshots_Overview.png[link=self, window=blank, width=100%]
 +
-. Explore the JavaScript contents, index files, and everything else that we need for this web-based JavaScript software.
+. Navigate to the *Snapshots* tab.
 +
-[source,bash,role=execute]
-----
-ls clumsy-bird
-----
+image::module-02/05_Snapshot_Menu.png[link=self, window=blank, width=100%]
 
-== Add Source Materials to Container
-
-. Now that you have verified the source materials exist, you will put the software inside of my container image using the `buildah copy` command.
+. Press *Take snapshot* and a dialog will open
 +
-[source,bash]
-----
-buildah copy ubi-working-container-1 clumsy-bird /var/www/html
-----
-
-[#container]
-== Enable Container in Background
-
-In the previous section of this lab, you ran the game natively through interactive mode. Because you are now building a web application you will need to run the container in the background and access it through a web address. 
-
-. Execute `buildah config` to specify a port and initialize the container. 
-
+[NOTE]
+There is a warning about the *cloudinitdisk* not being included in the snapshot. This is expected and happens because it is an ephemeral disk.
 +
-[source,bash]
-----
-buildah config --port 80 --cmd "/usr/sbin/init" ubi-working-container-1
-----
+image::module-02/06_VM_Snapshot_Dialog.png[link=self, window=blank, width=100%]
 
-NOTE: The command makes a configuration change to this container. I'm configuring this container to accept connections to its port 80. When the container starts up, it should run the init command, which, in this case, is going to be the Apache daemon right from earlier when I enabled it.
-
-== Commit Container and Deploy
-
-. Now that we have a container in a working configured state, it is time to make that permanent by committing it to a container image called `clumsy-bird`
+. Press *Save* and wait till the _Snapshot_ has been created and the *status* shows as *Succeeded*.
 +
-[source,bash]
-----
-buildah commit ubi-working-container-1 clumsy-bird
-----
+image::module-02/07_VM_Snapshot_Taken.png[link=self, window=blank, width=100%]
 
-. Verify that the image was created with `podman`
+. Press the three-dot menu, and see that the *Restore* option is greyed out because the VM is currently running.
 +
-[source,bash]
+image::module-02/08_VM_Restore_Disabled.png[link=self, window=blank, width=100%]
+
+. Next, switch to the *Console* tab. We are going to login and perform a modification that prevents the VM from being able to boot. 
++
+image::module-02/09_Console_Login.png[link=self, window=blank, width=100%]
++
+. Click on the *Guest login credentials* dropdown to gather the username and password to log into your console.
++
+NOTE: There is a *Copy to clipboard* button and a *Paste* button available here, which makes the login process much easier.
++
+. Once you are logged in, execute the following command: 
++
+[source,sh,role=execute]
 ----
-podman images
+sudo rm -rf /boot/grub2; sudo shutdown -r now
 ----
 +
-. Run the container Now it's time to run the container. 
+. The virtual machine will no longer be able to boot. 
 +
-[source,bash]
-----
-podman run -d -p 8500:80 clumsy-bird
-----
+image::module-02/10_Bootloader_Broken.png[link=self, window=blank, width=100%]
++
+IMPORTANT: In the previous step, the operating system was shutdown from within the guest. However, OpenShift Virtualization will restart it automatically by default. This behavior can be changed globally or on a per-VM basis.
++
+. Using the *Actions* dropdown menu or the shortcut button in the top right corner, *Stop* the VM. This process can take a long time since it attempts a graceful shutdown and the machine is in an unstable state. If you click on the *Actions* dropdown menu again you will have the option to *Force stop*. Please make use of this option in order to continue with the lab. 
++
+. You can click on the *Overview* tab to confirm that the VM has stopped. You can also see the snapshot we recently took listed in the *Snapshots* tile. (You may need to Force Stop the VM via the dropdown. This is fine as we are about to restore the snapshot.)
++
+image::module-02/11_VM_Stopped_Snapshot.png[link=self, window=blank, width=100%] 
++
+. Navigate back to the *Snapshots* tab, click the three-dot menu, and with the VM stopped, you will find *Restore* is no longer greyed out. Click it.
++
+image::module-02/12_VM_Restore.png[link=self, window=blank, width=100%]
++
+. In the dialog shown, press *Restore*.
++
+image::module-02/13_VM_Restore_Dialog.png[link=self, window=blank, width=100%]
 
-== Verify Application
+. Wait until the VM is restored, the process should be fairly quick.
++
+image::module-02/14_VM_Restored.png[link=self, window=blank, width=100%]
++
+. Return to *Overview* tab, and start the VM.
++
+image::module-02/15_VM_Start.png[link=self, window=blank, width=100%]
++
+. Click on the console tab to confirm that the VM has now restarted successfully. 
++
+image::module-02/16_VM_Running.png[link=self, window=blank, width=100%]
 
-Verify that the application is running by navigating to
+[[clone_vm]]
+== Clone a Virtual Machine
 
-http://bastion.{guid}.example.opentlc.com:8500
+Cloning creates a new VM that uses it's own disk image for storage, but most of the clone's configuration and stored data is identical to the source VM.
 
+. Return to the *Overview* screen, and click the *Actions* dropdown menu to see the option to clone the VM.
++
+image::module-02/17_Overview_Actions_Clone.png[link=self, window=blank, width=100%]
+. Press *Clone* from the *Actions* menu, and a dialog will open. Name the cloned VM *fedora02*, and select the check box to *Start VirtualMachine on clone*.
++
+image::module-02/18_VM_Clone_Dialog.png[link=self, window=blank, width=100%]
++
+. A new VM is created, the disks are cloned and automatically the portal will redirect you to the new VM, and you can see the *Created* time as very recently.
++
+image::module-02/19_VM_Cloned.png[link=self, window=blank, width=100%]
++
+[IMPORTANT]
+The cloned VM will have the same identity as the source VM, which may cause conflicts with applications and other clients interacting with the VM. Use caution when cloning a VM connected to an external network or in the same project.
+
+== Summary
+
+In this section of our lab we explored the storage options that are available to us when managing virtual machines. We also performed several VM management functions that are dependant on the storage provisioned for the virtual machine, including taking snapshots of VMs and cloning VMs to be used in another project or to help streamline development.
