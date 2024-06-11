@@ -163,42 +163,9 @@ image::Create_VM_PVC/19_Fedora_Agent_Details.png[]
 +
 image::Create_VM_PVC/19_Fedora_Metrics.png[]
 
-== Using virtctl to access VMs -- Pause - this may be integrated already for future labs/ Sumit
-
-In this section we will go over the virtctl command and how you can run the command inside the roadshow environment.  The steps here may be different when you run them in a production environment. 
-
-. We will need to go to the url for your linux virtctl download
-. Navigate to the Virtualization -> Overview page in the web console
-. Click the Download virtctl link to download the virtctl binary for the linux operating system
-+
-image::Virtctl/01_virtctl.png[]
-
-. Right Click on the Download virtctl for Linux for x86_64 link 
-+
-image::Virtctl/02_virtctl.png[]
-
-. Then select "Save link as..."
-+
-image::Virtctl/03_virtctl.png[]
-
-* You will need this link for later.  
-* The link will be similar to the following - the only difference will be where the XXXXX is for your specific lab
-** https://virtctl-route-openshift-cnv.apps.XXXXX.dynamic.redhatworkshops.io/amd/linux/virtctl.tar.gz
-. SSH to the host for the lab (inside bookbag) this will take you to the bastion 
-* example (ssh lab-user@147.28.180.143) 
-. Then type sudo ssh root@192.168.123.100
-* Inside the bastion cli-host you will need to type the following
-** wget --no-check-certificate https://hyperconverged-cluster-cli-download-openshift-cnv.apps.ocp.example.com/amd64/linux/virtctl.tar.gz 
-** untar the file by running tar -xvf virtctl.tar.gz
-** you will need to move the virtctl file to the /usr/local/bin so it is in your PATH
-*** mv virtctl /usr/local/bin/
-** then export the KUBECONFIG
-*** export KUBECONFIG=/root/.kube/config
-
 == Using virtctl for VMs 
 
-Now that we have virtctl setup lets do a little CLI
-
+. Please ensure you have ssh'd to the Bastion VM(via sudo ssh root@192.168.123.100)
 . To get the list of current VMs type the following 
 * oc get vms
 +
