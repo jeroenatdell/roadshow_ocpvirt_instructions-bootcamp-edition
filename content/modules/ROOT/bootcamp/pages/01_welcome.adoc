@@ -75,7 +75,7 @@ Participant needs to have own computer with browser and internet access. Chromiu
 
 Inside the Openshift Console select the Terminal Icon, in the upper right hand corner
 
-image::windows_migrate_fix/ocp-terminal.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/windows_migrate_fix/ocp-terminal.png[]
 
 Type the following 
 
