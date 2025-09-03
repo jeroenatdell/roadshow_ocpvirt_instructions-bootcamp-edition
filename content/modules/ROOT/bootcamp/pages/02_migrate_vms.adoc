@@ -70,18 +70,18 @@ To help understand the process of mapping resources, such as datastores and port
 
 . By default you'll see the VMs and Folders view, where you can see the four VMs representing the application.
 +
-image::MTV/100_vSphere_VM_List.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/100_vSphere_VM_List.png[]
 +
 [NOTE]
 The VMs with the suffix `_running` are the active ones. As for the migration have to be stopped, a clone of the VMs were created for the migration. Those VMs are the ones without that suffix.
 
 . Change to the networks view (or click link:https://portal.vc.opentlc.com/ui/app/dvportgroup;nav=n/urn:vmomi:DistributedVirtualPortgroup:dvportgroup-1916:ee1bef3e-6179-4c1f-9d2a-004c7b0df4e5/ports[ this link^]), then expand the tree to view the port group used by the virtual machines. Note that the name is `segment-migrating-to-ocpvirt`.
 +
-image::MTV/101_vSphere_Network.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/101_vSphere_Network.png[]
 
 . Finally, review the datastore by browsing to the datastores view (or using link:https://portal.vc.opentlc.com/ui/app/datastore;nav=s/urn:vmomi:Datastore:datastore-48:ee1bef3e-6179-4c1f-9d2a-004c7b0df4e5/vms/vms[this link^]). Expand the tree to see the name of the datastore, `WorkloadDatastore`, and optionally browse to the *VMs* sub-tab to view the capacity used by each virtual machine.
 +
-image::MTV/102_vSphere_Datastore.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/102_vSphere_Datastore.png[]
 
 === Review the VMware provider to the migration toolkit
 
@@ -90,14 +90,14 @@ The *Migration Toolkit for Virtualization* (*MTV*) uses the VMware Virtual Disk 
 . Navigate in the left menu to *Migration* -> *Providers for virtualization*
 . Select project `openshift-mtv`
 +
-image::MTV/91_MTV_Providers.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/91_MTV_Providers.png[]
 +
 [TIP]
 MTV 2.4 and later are project/namespace aware and do not require administrator privileges. You can delegate VM imports to application teams and VM users so that they can self-serve and migrate at their own pace!
 
 . By default, there is a provider called `host` which represents the *OpenShift Virtualization* as a target platform
 +
-image::MTV/92_MTV_Provider_list.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/92_MTV_Provider_list.png[]
 
 . The lab is already configured with the VMWare provider named `vmware`.
 
@@ -108,11 +108,11 @@ However, you will need to register the source vCenter system to the Migration To
 
 . By default, there is a provider called `host` which represents *OpenShift Virtualization* as a target platform
 +
-image::MTV/92_MTV_Provider_list.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/92_MTV_Provider_list.png[]
 
 . Press *Create Provider* button in the top right. A dialog it will appear.
 +
-image::MTV/93_MTV_Create_Provider.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/93_MTV_Create_Provider.png[]
 +
 // WKTBD: replace with student's credentials
 . Select *VMware* on the *Provider type* dropdown and fill the following data:
@@ -123,10 +123,10 @@ image::MTV/93_MTV_Create_Provider.png[]
 .. *VDDK init image*: `image-registry.openshift-image-registry.svc:5000/openshift/vddk:latest`
 .. *SHA-1 fingerprint*: `70:2D:52:D2:D1:A5:A2:75:58:8F:3D:07:D5:7E:E9:73:81:BC:88:A2`
 +
-image::MTV/94_MTV_Fill_Dialog.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/94_MTV_Fill_Dialog.png[]
 .  Press *Create* and wait till the *Status* column is changed to `Ready`
 +
-image::MTV/95_MTV_Provider_Added.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/95_MTV_Provider_Added.png[]
 
 Now MTV knows about your VMware vSphere environment and can connect to it.
 ////
@@ -139,7 +139,7 @@ These only need to be configured once and are then reused in subsequent VM Migra
 
 . Navigate in the left menu to *Migration* -> *NetworkMaps for virtualization* and press *Create NetworkMap*
 +
-image::MTV/96_MTV_NetworkMaps.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/96_MTV_NetworkMaps.png[]
 
 . Fill in the following information in the appeared dialog. Press *Create*.
 .. *Name*: `mapping-segment`
@@ -148,15 +148,15 @@ image::MTV/96_MTV_NetworkMaps.png[]
 .. *Source networks*: `segment-migrating-to-ocpvirt`
 .. *Target network*: `Pod network (default)`
 +
-image::MTV/97_Add_VMWARE_Mapping_Network.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/97_Add_VMWARE_Mapping_Network.png[]
 
 . Ensure the created mapping has the *Status* `Ready`
 +
-image::MTV/98_List_VMWARE_Mapping_Network.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/98_List_VMWARE_Mapping_Network.png[]
 
 . Navigate in the left menu to *Migration* -> *StorageMaps for virtualization* and press *Create StorageMap*
 +
-image::MTV/99_MTV_StorageMaps.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/99_MTV_StorageMaps.png[]
 
 . Fill in the following information. Press *Create*.
 .. *Name*: `mapping-datastore`
@@ -165,11 +165,11 @@ image::MTV/99_MTV_StorageMaps.png[]
 .. *Source storage*: `WorkloadDatastore`
 .. *Target storage classs*: `ocs-storagecluster-ceph-rbd (default)`
 +
-image::MTV/100_Add_VMWARE_Mapping_Storage.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/100_Add_VMWARE_Mapping_Storage.png[]
 
 . Ensure the created mapping has the *Status* `Ready`
 +
-image::MTV/101_List_VMWARE_Mapping_Storage.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/101_List_VMWARE_Mapping_Storage.png[]
 
 === Create a Migration Plan
 
@@ -180,7 +180,7 @@ Depending on order of you doing the modules, you might be missing required `vmex
 
 . Navigate in the left menu to *Migration* -> *Plans for virtualization* and press *Create plan*
 +
-image::MTV/102_Create_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/102_Create_VMWARE_Plan.png[]
 
 . On the wizard fill the following information on the *General settings* step. Press *Next* when done.
 .. *Plan name*: `move-webapp-vmware`
@@ -188,39 +188,39 @@ image::MTV/102_Create_VMWARE_Plan.png[]
 .. *Target provider*: `host`
 .. *Target namespace*: `vmexamples`
 +
-image::MTV/52_General_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/52_General_VMWARE_Plan.png[]
 
 . On the next step, select `All datacenters`  and press *Next*
 +
-image::MTV/53_VM_Filter_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/53_VM_Filter_VMWARE_Plan.png[]
 
 . On the next step select the three VMs: database, winweb01 and winweb02. Press *Next*:
 +
-image::MTV/54_VM_Select_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/54_VM_Select_VMWARE_Plan.png[]
 
 . On the *Network mapping* step select `mapping-segment` and press *Next*
 +
-image::MTV/55_Network_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/55_Network_VMWARE_Plan.png[]
 
 . On the *Storage mapping* step select `mapping-datastore` and press *Next*
 +
-image::MTV/56_Storage_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/56_Storage_VMWARE_Plan.png[]
 
 . Press *Next* on the steps *Type* and *Hooks*
 
 . Review the configuration specified and press *Finish*
 +
-image::MTV/57_Finish_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/57_Finish_VMWARE_Plan.png[]
 
 . Ensure the status of the plan is *Ready*
 +
-image::MTV/58_Ready_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/58_Ready_VMWARE_Plan.png[]
 
 . Press *Start* to begin the migration of the three VMs
 
 . After around 10 minutes the migration is completed
 +
-image::MTV/59_Completed_VMWARE_Plan.png[]
+image::/content/modules/ROOT/bootcamp/assets/images/MTV/59_Completed_VMWARE_Plan.png[]
 +
 [IMPORTANT]
 ====
