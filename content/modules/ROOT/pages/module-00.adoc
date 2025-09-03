@@ -28,7 +28,7 @@ Like other objects in OpenShift, Projects (which are an abstraction for Kubnerne
 
 . Browse to *Virtualization* -> *VirtualMachines* using the left navigation menu:
 +
-image::/content/modules/ROOT/assets/images/module-00/01_Left_Menu.png[link=self, window=blank, width=100%]
+image::/content/modules/ROOT/assets/images/module-00/01_Left_Menu.png[link=self, window=blank]
 +
 [NOTE]
 ====
