@@ -27,25 +27,25 @@
 
 == Instructors
 
-image::introductions/mg.png[]
+image::assets/images/introductions/mg.png[]
 
 * Michael Galayda 
 * Senior Principal Architect
 
 
-image::introductions/tb.png[]
+image::assets/images/introductions/tb.png[]
 
 * Thomas Bonds
 * Architect
 
-image::introductions/ko.png[]
+image::assets/images/introductions/ko.png[]
 
 * KO
 * Senior Principal Architect
 
 == BootCamp Vendor Guests
 
-image::introductions/mb-kasten.png[]
+image::assets/images/introductions/mb-kasten.png[]
 
 * Matt Bator
 * Accomplisher of Stuff and Things
@@ -122,10 +122,10 @@ link:https://docs.google.com/spreadsheets/d/1i7e57sZVfju87Zw32lyyv1cWLN0fvP5FJW2
 
 == Getting there with your friends
 
-image::introductions/virt=partners.png[]
+image::assets/images/introductions/virt=partners.png[]
 
 == Coming to OpenShift Virt
 
-image::introductions/toocpvirt.png[]
+image::assets/images/introductions/toocpvirt.png[]
 
 
